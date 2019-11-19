@@ -1,0 +1,17 @@
+{
+  "models": {
+    "demo_plant": "./models/Tank_4-X.obj",
+    "demo_ship": "./models/Tanker_Ship.obj",
+    "large_plant": "./models/plant_mod.obj"
+  },
+  "env": {
+    "default": [
+      "./env/posx.jpg",
+      "./env/negx.jpg",
+      "./env/posy.jpg",
+      "./env/negy.jpg",
+      "./env/posz.jpg",
+      "./env/negz.jpg"
+    ]
+  }
+}
