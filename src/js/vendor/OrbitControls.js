@@ -138,12 +138,27 @@ let OrbitControls = function ( object, domElement ) {
 
 	};
 	
-	this.clampInstance = (instance, light = null) => {
+	this.getClampInstanceInfo = (instance) => {
 		let box = new Box3().setFromObject(instance);
 		let sphere = new Sphere();
 		box.getBoundingSphere(sphere);
 		
-		sphere.applyMatrix4(instance.matrixWorld);
+		let s = new Vector3().subVectors(this.object.position, this.target);
+		
+		let h = sphere.radius / Math.tan(this.object.fov / 2 * Math.PI / 180);
+		
+		let newPos = new Vector3().addVectors(sphere.center, s.setLength(h));
+		
+		return {
+			position: newPos.clone(),
+			target: sphere.center.clone()
+		}
+	};
+	
+	this.clampInstance = (instance, light = null) => {
+		let box = new Box3().setFromObject(instance);
+		let sphere = new Sphere();
+		box.getBoundingSphere(sphere);
 		
 		let s = new Vector3().subVectors(this.object.position, this.target);
 		
@@ -153,6 +168,7 @@ let OrbitControls = function ( object, domElement ) {
 		
 		this.object.position.copy(newPos);
 		this.target.copy(sphere.center);
+		this.target.y = Math.max(this.target.y, 0.01);
 		
 		if (!light) {
 			return false;
@@ -165,8 +181,14 @@ let OrbitControls = function ( object, domElement ) {
 		light.shadow.camera.right = boxSize;
 		light.shadow.camera.top = boxSize;
 		light.shadow.camera.bottom = -boxSize;
-		light.position.set(box.max.x, box.max.y * 1.5, box.min.z * 2.0);
-		light.target.position.copy(box.min.clone()).setZ(0);
+		
+		light.target.position.copy(box.getCenter());
+		
+		light.position.set(
+				sphere.center.x,
+				box.max.y * 1.5,
+				sphere.center.z
+		);
 		
 		light.castShadow = true;
 	};

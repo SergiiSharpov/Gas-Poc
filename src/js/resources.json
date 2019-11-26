@@ -1,8 +1,10 @@
 {
   "models": {
-    "demo_plant": "./models/Tank_4-X.obj",
-    "demo_ship": "./models/Tanker_Ship.obj",
-    "large_plant": "./models/plant_mod.obj"
+    "drill": "./models/main/Pump.FBX",
+    "port": "./models/main/PortLast.FBX",
+    "ship": "./models/main/Ship.FBX",
+    "smallPlant": "./models/main/Plant01.FBX",
+    "largePlant": "./models/main/Plant02.FBX"
   },
   "env": {
     "default": [
@@ -13,5 +15,8 @@
       "./env/posz.jpg",
       "./env/negz.jpg"
     ]
+  },
+  "textures": {
+    "waternormals": "./textures/waternormals.jpg"
   }
 }

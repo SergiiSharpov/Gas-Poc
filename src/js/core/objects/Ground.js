@@ -1,11 +1,12 @@
 import {
+  AlwaysDepth,
   BufferAttribute,
-  CanvasTexture,
-  GridHelper,
+  CanvasTexture, DoubleSide, GreaterDepth, GreaterEqualDepth,
+  GridHelper, LessDepth,
   Line,
   Mesh, MeshBasicMaterial,
-  MeshPhongMaterial,
-  Object3D,
+  MeshPhongMaterial, MeshStandardMaterial, NeverDepth, NotEqualDepth,
+  Object3D, PlaneBufferGeometry,
   PlaneGeometry, RepeatWrapping, UVMapping
 } from "three";
 import {BLOOM_LAYER} from "../../composer";
@@ -14,29 +15,26 @@ class Ground extends Object3D {
   constructor() {
     super();
   
-    let grid = new GridHelper( 200, 160, 0x0088ff, 0x0088ff);
-    const normals = grid.geometry.attributes.position.clone().array.map((v, i) => {
-      if (i % 3 === 1) {
-        return 1.0;
-      }
-    
-      return 0.0;
+    let floorMaterial = new MeshStandardMaterial({
+      metalness: 0.0,
+      roughness: 0.8,
+      //emissive: 0x111111,
+      map: Ground.getCanvasTexture(),
+      // polygonOffset: true,
+      // polygonOffsetFactor: 1,
+      //depthFunc: LessDepth
     });
-    grid.geometry.setAttribute( 'normal', new BufferAttribute(normals, 3));
-    let gridMesh = new Line(grid.geometry.clone(), new MeshPhongMaterial({color: 0x84ccff}));
-  
-    let floorMesh = new Mesh(new PlaneGeometry(200, 200), new MeshPhongMaterial({shininess: 0, map: this.getCanvasTexture()}));
-    floorMesh.position.y = -0.1;
+    let floorMesh = new Mesh(new PlaneBufferGeometry(1000, 1000, 24, 24), floorMaterial);
+    //floorMesh.position.y = -0.1;
     floorMesh.rotation.x = -Math.PI * 0.5;
+  
+    floorMesh.frustumCulled = false;
+    this.frustumCulled = false;
     
     this.add(floorMesh);
-    //this.add(gridMesh);
-  
-    // floorMesh.layers.set(BLOOM_LAYER);
-    // gridMesh.layers.set(BLOOM_LAYER);
   }
   
-  getCanvasTexture() {
+  static getCanvasTexture() {
     let canvas = document.createElement('canvas');
     canvas.width = 512;
     canvas.height = 512;
@@ -61,7 +59,7 @@ class Ground extends Object3D {
     }
   
     let map = new CanvasTexture(canvas, UVMapping, RepeatWrapping, RepeatWrapping);
-    map.repeat.set(250, 250);
+    map.repeat.set(1000, 1000);
     map.needsUpdate = true;
     
     return map;
